@@ -4,30 +4,36 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer utilities {
-  .animate-spin-slow {
-    animation: spin 20s linear infinite;
-  }
-}
-
-@keyframes spin {
+/* MANDALA ROTATION ANIMATION */
+@keyframes rotate-mandala {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 
-/* Ensure Leaflet stays in background */
+.animate-spin-slow {
+  animation: rotate-mandala 15s linear infinite;
+}
+
+/* VINTAGE HERITAGE MAP FILTER */
+.heritage-map {
+  filter: sepia(0.3) hue-rotate(-20deg) brightness(1.1) contrast(0.9);
+}
+
 .leaflet-container {
   width: 100%;
   height: 100%;
   z-index: 0;
-  /* Soft vintage filter to match Jaipur look */
-  filter: sepia(0.2) hue-rotate(-15deg) brightness(1.05);
 }
 
 body {
   margin: 0;
   padding: 0;
   overflow: hidden;
+  background-color: #FFF9F0;
+}
+
+.font-serif {
+  font-family: 'Playfair Display', serif;
 }
 
 ::-webkit-scrollbar {
