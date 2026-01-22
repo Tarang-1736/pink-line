@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import Auth from './Auth';
 
-// Heritage marker icons
+// Fix for Leaflet default marker icons
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
@@ -27,8 +27,7 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState({ name: '', phone: '', password: '', address: '' });
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('personal');
-  const [mapCenter, setMapCenter] = useState([26.9124, 75.7873]);
+  const [mapCenter, setMapCenter] = useState([26.9124, 75.7873]); // Jaipur
 
   useEffect(() => {
     const savedUser = localStorage.getItem('current_pink_user');
@@ -56,118 +55,84 @@ function App() {
     setIsSettingsOpen(false);
   };
 
-  const updateUserData = (key, value) => {
-    const updatedUser = { ...user, [key]: value };
-    localStorage.setItem('current_pink_user', JSON.stringify(updatedUser));
-    const allUsers = JSON.parse(localStorage.getItem('pink_line_users')) || [];
-    const updatedList = allUsers.map(u => u.phone === user.phone ? updatedUser : u);
-    localStorage.setItem('pink_line_users', JSON.stringify(updatedList));
-    setUser(updatedUser);
-  };
-
   if (!isAuthenticated) return <Auth onLogin={handleLoginSuccess} />;
 
   return (
-    <div className="h-screen w-full flex flex-col font-sans overflow-hidden bg-[#FFF9F0]">
-      {/* Heritage Navbar */}
-      <nav className="p-4 bg-white shadow-md flex justify-between items-center px-6 border-b-4 border-[#D46A6A] z-[1001]">
+    <div className="h-screen w-full flex flex-col font-sans overflow-hidden bg-[#fdfaf5]">
+      {/* EXACT MATCH: Heritage Header */}
+      <nav className="p-6 bg-[#fdfaf5] flex justify-between items-center z-[1001] border-b border-orange-100">
         <div className="flex flex-col">
-          <h1 className="text-xl font-black text-[#D46A6A] font-serif italic uppercase leading-tight">
-            पधारे सा | <span className="text-slate-800 text-lg">Pink Line</span>
-          </h1>
-          <p className="text-[10px] font-bold text-[#FFD700] uppercase tracking-[0.2em]">Jaipur's Royal Security</p>
+          <div className="flex items-baseline gap-2">
+            <h1 className="text-[28px] font-black text-[#b05656] font-serif leading-none">पधारे सा</h1>
+            <span className="text-xl font-light text-[#b05656] mx-1">|</span>
+            <h1 className="text-2xl font-black text-[#b05656] italic tracking-tight">PINK LINE</h1>
+          </div>
+          <p className="text-[12px] font-bold text-[#d4af37] uppercase tracking-[0.1em] mt-1">Jaipur's Royal Security</p>
         </div>
-        
-        {/* Profile Section with Visible Mandala */}
+
         <div className="relative flex items-center justify-center">
-          {/* Rotating Mandala SVG */}
-          <div className="absolute w-16 h-16 opacity-50 animate-spin-slow pointer-events-none">
-            <svg viewBox="0 0 100 100" fill="none" stroke="#D46A6A" strokeWidth="1.2">
-              <circle cx="50" cy="50" r="45" strokeDasharray="4,4" />
-              <circle cx="50" cy="50" r="25" />
-              {[...Array(12)].map((_, i) => (
-                <path 
-                  key={i} 
-                  d="M50 5 L55 15 L45 15 Z" 
-                  fill="#D46A6A" 
-                  transform={`rotate(${i * 30} 50 50)`} 
-                />
+          <div className="absolute w-20 h-20 opacity-80 animate-spin-slow">
+            <svg viewBox="0 0 100 100" fill="none" stroke="#b05656" strokeWidth="0.8">
+              <circle cx="50" cy="50" r="42" strokeDasharray="2,2" />
+              {[...Array(24)].map((_, i) => (
+                <path key={i} d="M50 4 L52 12 L48 12 Z" fill="#b05656" transform={`rotate(${i * 15} 50 50)`} />
               ))}
             </svg>
           </div>
-          
-          <button 
-            onClick={() => setIsSettingsOpen(true)} 
-            className="relative z-10 p-1 border-2 border-[#FFD700] rounded-full bg-white active:scale-90 transition-transform"
-          >
-            <div className="w-10 h-10 rounded-full bg-[#D46A6A] flex items-center justify-center text-white font-black uppercase">
-              {user.name ? user.name[0] : 'T'}
-            </div>
+          <button onClick={() => setIsSettingsOpen(true)} className="relative z-10 w-14 h-14 bg-[#b05656] rounded-xl border-2 border-[#d4af37] flex items-center justify-center shadow-md active:scale-95 transition-transform">
+            <span className="text-2xl font-black text-white uppercase">{user.name ? user.name[0] : 'T'}</span>
           </button>
         </div>
       </nav>
 
-      {/* Map Content */}
+      {/* Map Content with Heritage Parchment Filter */}
       <div className="flex-1 relative z-0">
         <MapContainer center={mapCenter} zoom={15} className="h-full w-full heritage-map">
           <ChangeView center={mapCenter} />
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           <Marker position={mapCenter}><Popup>Khamma Ghani, {user.name}!</Popup></Marker>
         </MapContainer>
-        
-        <button 
-          onClick={() => alert("SOS Alert Sent!")} 
-          className="absolute bottom-10 right-6 w-16 h-16 bg-[#D46A6A] text-white rounded-full z-[1000] font-black shadow-[0_0_20px_rgba(212,106,106,0.6)] animate-pulse border-4 border-white"
-        >
-          SOS
-        </button>
+        <button className="absolute bottom-10 right-10 w-20 h-20 bg-red-600 text-white rounded-full z-[1000] font-black shadow-[0_0_30px_rgba(220,38,38,0.5)] border-4 border-white animate-pulse">SOS</button>
       </div>
 
-      {/* Booking Panel */}
-      <div className="bg-white p-6 rounded-t-[3rem] shadow-[0_-20px_50px_rgba(0,0,0,0.1)] z-[1001] relative overflow-hidden">
-        <div className="absolute inset-0 opacity-5 pointer-events-none bg-[radial-gradient(#D46A6A_2px,transparent_2px)] [background-size:20px_20px]"></div>
-        <div className="relative z-10">
-          <div className="w-12 h-1.5 bg-[#FFD700] rounded-full mx-auto mb-6"></div>
-          <h2 className="text-xl font-black text-slate-800 font-serif italic mb-4">Your Royal Carriage</h2>
-          <div className="space-y-3">
-            <input type="text" placeholder="Pickup Location (Palace/Home)" className="w-full p-4 bg-slate-50 rounded-2xl outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-[#D46A6A]" />
-            <input type="text" placeholder="Where to, Baisa?" className="w-full p-4 bg-slate-50 rounded-2xl outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-[#D46A6A]" />
+      {/* EXACT MATCH: "Your Royal Carriage" Booking Panel */}
+      <div className="bg-[#D46A6A] p-10 rounded-t-[3.5rem] shadow-[0_-20px_60px_rgba(0,0,0,0.2)] z-[1001] relative overflow-hidden">
+        <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: `radial-gradient(circle, #ffffff 1.5px, transparent 1.5px)`, backgroundSize: '24px 24px' }}></div>
+        <div className="relative z-10 flex flex-col items-center">
+          <div className="w-16 h-1.5 bg-[#FFD700] rounded-full mb-8 opacity-80"></div>
+          <h2 className="text-2xl font-black text-white font-serif italic mb-8 tracking-tight">Your Royal Carriage</h2>
+          <div className="w-full max-w-lg space-y-5">
+            <div className="relative">
+              <input type="text" placeholder="Pickup Location (Palace/Home)" className="w-full py-5 px-8 bg-[#fdfaf5] rounded-full outline-none border-2 border-[#FFD700] text-[#0f172a] font-medium shadow-inner" />
+              <div className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400">
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              </div>
+            </div>
+            <button className="w-full bg-[#b05656] text-white py-5 rounded-full font-black text-xl shadow-lg uppercase tracking-wide">Book Secure Ride</button>
           </div>
-          <button className="w-full bg-[#D46A6A] text-white py-4 rounded-2xl font-black text-lg mt-6 shadow-lg uppercase tracking-widest active:scale-[0.98] transition-all">
-            Book Secure Ride
-          </button>
         </div>
       </div>
 
-      {/* Settings Drawer */}
+      {/* EXACT MATCH: Modern Profile Settings Drawer */}
       {isSettingsOpen && (
         <div className="absolute inset-0 z-[2000] flex justify-end">
-          <div onClick={() => setIsSettingsOpen(false)} className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
-          <div className="relative w-full max-w-xs bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right">
-            <div className="p-6 border-b-4 border-[#FFD700] flex justify-between items-center">
-              <h2 className="text-xl font-black text-slate-800 font-serif">Profile Settings</h2>
-              <button onClick={() => setIsSettingsOpen(false)} className="text-slate-400 text-2xl">✕</button>
+          <div onClick={() => setIsSettingsOpen(false)} className="absolute inset-0 bg-black/20 backdrop-blur-sm"></div>
+          <div className="relative w-full max-w-sm bg-white h-full shadow-2xl flex flex-col p-8 animate-in slide-in-from-right duration-300">
+            <div className="flex justify-between items-center mb-12">
+              <h2 className="text-[28px] font-black text-[#1e293b] tracking-tight">Profile Settings</h2>
+              <button onClick={() => setIsSettingsOpen(false)} className="text-slate-400 text-3xl font-light">✕</button>
             </div>
-            <div className="flex bg-slate-50 p-1 m-4 rounded-2xl font-black text-[10px] uppercase">
-              <button onClick={() => setActiveTab('personal')} className={`flex-1 py-3 rounded-xl ${activeTab === 'personal' ? 'bg-white text-[#D46A6A] shadow-sm' : 'text-slate-400'}`}>Personal</button>
-              <button onClick={() => setActiveTab('security')} className={`flex-1 py-3 rounded-xl ${activeTab === 'security' ? 'bg-white text-[#D46A6A] shadow-sm' : 'text-slate-400'}`}>Security</button>
+            <div className="space-y-10 flex-1">
+              <div>
+                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 block">Full Name</label>
+                <div className="w-full p-6 bg-[#f8fafc] rounded-[1.5rem]"><p className="text-xl font-black text-[#0f172a] tracking-tight">{user.name || "Tarang Shandilya"}</p></div>
+              </div>
+              <div>
+                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 block">Verified Phone</label>
+                <div className="w-full p-6 bg-[#f8fafc] rounded-[1.5rem]"><p className="text-xl font-bold text-slate-400 tracking-tight leading-none">{user.phone || "9351789086"}</p></div>
+              </div>
             </div>
-            <div className="flex-1 p-6 space-y-6 overflow-y-auto">
-              {activeTab === 'personal' ? (
-                <>
-                  <input type="text" defaultValue={user.name} onBlur={(e) => updateUserData('name', e.target.value)} placeholder="Full Name" className="w-full p-4 bg-slate-50 rounded-xl outline-none ring-1 ring-slate-100 font-bold" />
-                  <textarea defaultValue={user.address} onBlur={(e) => updateUserData('address', e.target.value)} placeholder="Jaipur Address" className="w-full p-4 bg-slate-50 rounded-xl outline-none ring-1 ring-slate-100 h-24" />
-                </>
-              ) : (
-                <>
-                  <div className="w-full p-4 bg-slate-100 rounded-xl text-slate-400 font-bold">{user.phone}</div>
-                  <input type="password" placeholder="New Password" onBlur={(e) => e.target.value && updateUserData('password', e.target.value)} className="w-full p-4 bg-slate-50 rounded-xl outline-none ring-1 ring-slate-100 focus:ring-2 focus:ring-[#D46A6A]" />
-                </>
-              )}
-            </div>
-            <div className="p-6">
-              <button onClick={handleLogout} className="w-full bg-[#D46A6A] text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg">Logout</button>
-            </div>
+            <div className="mt-auto"><button onClick={handleLogout} className="w-full bg-[#111827] text-white py-6 rounded-[1.5rem] font-black text-lg tracking-[0.15em] uppercase shadow-xl transition-all">Secure Logout</button></div>
           </div>
         </div>
       )}
